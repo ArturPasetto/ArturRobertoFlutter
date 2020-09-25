@@ -1,0 +1,2 @@
+module artur.roberto.flutter {
+}
