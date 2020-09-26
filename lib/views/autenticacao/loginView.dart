@@ -1,9 +1,8 @@
-
-import 'package:artur_roberto_flutter/controllers/autenticarController.dart';
+import 'package:artur_roberto_flutter/controllers/loginController.dart';
 import 'package:artur_roberto_flutter/models/userModel.dart';
 import 'package:artur_roberto_flutter/views/autenticacao/registrarView.dart';
-import 'package:artur_roberto_flutter/styles/formStyle.dart';
-import 'package:artur_roberto_flutter/views/home/home.dart';
+import 'package:artur_roberto_flutter/styles/styles.dart';
+import 'package:artur_roberto_flutter/views/home/homeView.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +10,8 @@ import 'package:get/get.dart';
 class LoginView extends StatelessWidget{
 
   final _loginFormKey = GlobalKey<FormState>();
-  final AutenticarController _autenticarController = AutenticarController();
+  final LoginController _loginController = Get.put(LoginController());
+  var _dialogError = ''.obs;
   UserModel _user = UserModel();
 
   @override
@@ -54,8 +54,9 @@ class LoginView extends StatelessWidget{
                  color: Colors.blue,
                  child: Text('Logar', style: TextStyle(color: Colors.white)),
                  onPressed:() async {
-                  dynamic result = await _autenticarController.logar(_user, _loginFormKey);
-                    if(result == null) print("erro");
+                  dynamic result = await this._loginController.logar(_user, _loginFormKey);
+
+                    if(result == null) this._dialogError.value = 'Não foi possível logar com essas credenciais';
                     else{
                       Get.to(Home());
                     }
@@ -63,7 +64,7 @@ class LoginView extends StatelessWidget{
                  },
                ),
                SizedBox(height: 12),
-               Obx(() => Text(_autenticarController.dialogError.value, style: TextStyle(color:Colors.red, fontSize:12))),
+               Obx(() => Text(this._dialogError.value, style: TextStyle(color:Colors.red, fontSize:12))),
              ]
            ),
          )

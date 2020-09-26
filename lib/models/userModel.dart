@@ -1,5 +1,4 @@
 
-
 class UserModel {
 
   final String uid;
@@ -12,6 +11,5 @@ class UserModel {
   String get getSenha => this._senha;
   set setEmail(String value) => this._email = value;
   set setSenha(String value) => this._senha = value;
-
 
 }

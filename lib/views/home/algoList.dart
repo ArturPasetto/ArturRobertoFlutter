@@ -1,24 +1,15 @@
-
-import 'package:artur_roberto_flutter/models/algoModel.dart';
+import 'package:artur_roberto_flutter/models/algoUserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'algoListTile.dart';
 
-class AlgoList extends StatefulWidget{
-  @override
-  _AlgoListState createState() => _AlgoListState();
-}
-
-
-
-
-class _AlgoListState extends State<AlgoList>{
+class AlgoList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    final listaAlgo = Provider.of<List<AlgoModel>>(context);
+    final listaAlgo = Provider.of<List<AlgoUserModel>>(context) ?? [];
 
     /*listaAlgo.forEach((algo) {
       print(algo.um);
