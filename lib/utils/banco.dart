@@ -5,7 +5,6 @@ class Banco{
 
   static final FirebaseAuth FIREBASE_AUTH = FirebaseAuth.instance;
   final CollectionReference algoCollection = FirebaseFirestore.instance.collection('algo');
-  final String uid;
+  final CollectionReference jogoCollection = FirebaseFirestore.instance.collection('jogo');
 
-  Banco({this.uid});
 }

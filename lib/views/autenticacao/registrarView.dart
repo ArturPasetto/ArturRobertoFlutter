@@ -21,6 +21,7 @@ class RegistrarView extends StatelessWidget{
         appBar:AppBar(
             backgroundColor: Colors.blue,
             elevation: 0.0,
+            centerTitle: true,
             title:Text("Registrar"),
             actions: <Widget>[
               FlatButton.icon(
@@ -38,7 +39,10 @@ class RegistrarView extends StatelessWidget{
                   children:<Widget>[
                     SizedBox(height:20),
                     TextFormField(
-                      decoration: textFormFieldDecoration.copyWith(labelText: 'Email'),
+                      decoration:textFormFieldDecoration.copyWith(
+                          labelText: 'Email',
+                          icon: Icon(Icons.email)
+                      ),
                       onSaved: (value) => _user.setEmail = value,
                       validator: (value){
                         if(value.isEmpty) 'Email não pode ser vazio';
@@ -49,7 +53,10 @@ class RegistrarView extends StatelessWidget{
                     SizedBox(height:20),
                     TextFormField(
                         obscureText: true,
-                        decoration:textFormFieldDecoration.copyWith(labelText: 'Senha'),
+                        decoration:textFormFieldDecoration.copyWith(
+                            labelText: 'Senha',
+                            icon: Icon(Icons.lock)
+                        ),
                         onSaved: (value) => _user.setSenha = value,
                         validator: (value){
                           if(value.isEmpty) 'Senha não pode ser vazia';

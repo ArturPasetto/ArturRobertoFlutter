@@ -1,9 +1,9 @@
 import 'package:artur_roberto_flutter/models/userModel.dart';
 import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-import 'algoController.dart';
+import 'jogoController.dart';
 
 class UserController{
 
@@ -20,7 +20,7 @@ class UserController{
   }
   */
 
-  AlgoController _algoController = AlgoController();
+  JogoController _jogoController = JogoController();
 
   //criar objeto usuario com base no usuario enviado pela stream do firebase
   UserModel userFromFirebaseUser(User user){
@@ -42,7 +42,7 @@ class UserController{
     try{
       UserCredential authResult = await Banco.FIREBASE_AUTH.createUserWithEmailAndPassword(email: usuario.getEmail.trim(), password: usuario.getSenha.trim());
 
-      await _algoController.atualizarDadosUsuario('usuario', '2', '3', 100, authResult.user.uid);
+      await _jogoController.atualizarDadosUsuario('usuario', '2', '3', 100, authResult.user.uid);
 
       return this.userFromFirebaseUser(authResult.user);
     }catch(e){

@@ -21,6 +21,7 @@ class LoginView extends StatelessWidget{
      appBar:AppBar(
        backgroundColor: Colors.blue,
        elevation: 0.0,
+       centerTitle: true,
        title:Text("Login"),
        actions: <Widget>[
          FlatButton.icon(
@@ -31,6 +32,7 @@ class LoginView extends StatelessWidget{
        ],
      ),
      body: Container(
+        alignment: Alignment.center,
          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal:25.0),
          child:Form(
            key: this._loginFormKey,
@@ -38,14 +40,20 @@ class LoginView extends StatelessWidget{
              children:<Widget>[
                SizedBox(height:20),
                TextFormField(
-                   decoration:textFormFieldDecoration.copyWith(labelText: 'Email'),
+                   decoration:textFormFieldDecoration.copyWith(
+                       labelText: 'Email',
+                       icon: Icon(Icons.email)
+                   ),
                    onSaved: (value) => _user.setEmail = value,
                    validator: (value) => value.isEmpty ? 'Email não pode ser vazio' : null
                ),
                SizedBox(height:20),
                TextFormField(
                   obscureText: true,
-                  decoration:textFormFieldDecoration.copyWith(labelText: 'Senha'),
+                  decoration:textFormFieldDecoration.copyWith(
+                      labelText: 'Senha',
+                      icon: Icon(Icons.lock)
+                  ),
                   onSaved: (value) => _user.setSenha = value,
                   validator: (value) => value.isEmpty ? 'Senha não pode ser vazia' : null
                ),
@@ -54,12 +62,10 @@ class LoginView extends StatelessWidget{
                  color: Colors.blue,
                  child: Text('Logar', style: TextStyle(color: Colors.white)),
                  onPressed:() async {
-                  dynamic result = await this._loginController.logar(_user, _loginFormKey);
+                   dynamic result = await this._loginController.logar(_user, _loginFormKey);
 
-                    if(result == null) this._dialogError.value = 'Não foi possível logar com essas credenciais';
-                    else{
-                      Get.to(Home());
-                    }
+                   if(result == null) this._dialogError.value = 'Não foi possível logar com essas credenciais';
+                   else  Get.to(Home());
                     //else print(result);
                  },
                ),
