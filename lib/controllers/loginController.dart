@@ -9,11 +9,7 @@ class LoginController {
   UserController _userController = UserController();
 
   //logar
-  Future logar(UserModel usuario, GlobalKey<FormState> formkey) async{
-    if(!formkey.currentState.validate()){
-      return null;
-    }
-    formkey.currentState.save();
+  Future logar(UserModel usuario) async{
 
     try{
       UserCredential authResult = await Banco.FIREBASE_AUTH.signInWithEmailAndPassword(email: usuario.getEmail.trim(), password: usuario.getSenha.trim());
@@ -25,13 +21,16 @@ class LoginController {
   }
 
   //deslogar
-  Future deslogar() async{
-    try{
-      return await Banco.FIREBASE_AUTH.signOut();
-    }catch(e){
-      print(e.toString());
-      return null;
-    }
+  Future<bool> deslogar() async{
+
+    return await Banco.FIREBASE_AUTH
+    .signOut()
+    .then((value) => true)
+    .catchError((erro){
+      print(erro);
+      return false;
+    });
+
   }
 
 

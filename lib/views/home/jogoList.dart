@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'jogoListTile.dart';
+import 'JogoListItem.dart';
 
 
 
@@ -19,14 +19,14 @@ class JogoList extends StatelessWidget{
         print(jogo.ano);
         print(jogo.descricao);
         print(jogo.uid);
-        print(jogo.genero);
-      });
-*/
+      });*/
+
 
     return ListView.builder(
+      padding: EdgeInsets.only(top: 20),
       itemCount: listaJogo.length,
       itemBuilder: (context, index){
-        return JogoListTile(jogo: listaJogo.elementAt(index));
+        return JogoListItem(jogo: listaJogo.elementAt(index));
       },
     );
   }

@@ -1,48 +1,61 @@
-import 'package:artur_roberto_flutter/models/algoUserModel.dart';
 import 'package:artur_roberto_flutter/models/jogoModel.dart';
 import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
-class JogoController{
+class JogoController extends GetxController{
 
   Banco _banco = Banco();
 
-  Future adicionarJogo(String nome, int ano, String descricao, List<dynamic> genero, GlobalKey<FormState> formkey) async{
-    if(!formkey.currentState.validate()){
-      print("aqi");
-      return null;
-    }
-    formkey.currentState.save();
+  Future<bool> adicionarJogo(JogoModel jogo, GlobalKey<FormState> formkey) async{
 
 
-    return await this._banco.jogoCollection.add({
-      'nome': nome,
-      'ano': ano,
-      'descricao': descricao,
-      'genero': genero
-    }).catchError((erro) => print(erro));
-
+    return await this._banco.usuarioCollection.doc(Banco.FIREBASE_AUTH.currentUser.uid).collection('jogos').add({
+      'nome': jogo.nome,
+      'ano': jogo.ano,
+      'descricao': jogo.descricao,
+    })
+        .then((value) => true)
+        .catchError((erro) => false);
   }
 
   Future<bool> excluirJogo(String jogoUID) async{
 
-    return await this._banco.jogoCollection.doc(jogoUID)
-        .delete()
+    return await this._banco.usuarioCollection.doc(Banco.FIREBASE_AUTH.currentUser.uid).collection('jogos').doc(jogoUID)
+    .delete()
         .then((value) => true)
-        .catchError((erro) => false);
+        .catchError((erro) {
+          print(erro);
+          return false;
+        });
 
   }
 
-  Future atualizarJogo(String nome, int ano, String descricao, List<dynamic> genero, String jogoUID ) async{
-    return await this._banco.jogoCollection.doc(jogoUID).set({
-      'nome': nome,
-      'ano': ano,
-      'descricao': descricao,
-      'genero': genero,
-    }).catchError((erro) => print(erro));
+  Future<bool> atualizarJogo(JogoModel jogo) async{
+
+    return await this._banco.usuarioCollection.doc(Banco.FIREBASE_AUTH.currentUser.uid).collection('jogos').doc(jogo.uid).update({
+      'nome': jogo.nome,
+      'ano': jogo.ano,
+      'descricao': jogo.descricao,
+    })
+        .then((valor) => true)
+        .catchError((erro) {
+          print(erro);
+          return false;
+        });
+
   }
 
+   Stream<List<JogoModel>> get getListaJogosUser{
+
+    return this._banco.usuarioCollection.doc(Banco.FIREBASE_AUTH.currentUser.uid).collection('jogos')
+        .snapshots().map((QuerySnapshot querySnapshot) => querySnapshot.docs.map((QueryDocumentSnapshot doc) {
+          return JogoModel(uid: doc.id, nome: doc.get('nome'), ano: doc.get('ano'), descricao: doc.get('descricao'));
+    }).toList());
+  }
+
+  /*
   Stream<List<JogoModel>> get getListaJogos{
     return this._banco.jogoCollection.snapshots().map((QuerySnapshot querySnapshot) {
       return querySnapshot.docs.map((QueryDocumentSnapshot doc){
@@ -51,25 +64,25 @@ class JogoController{
             nome: doc.get('nome'),
             ano: doc.get('ano'),
             descricao: doc.get('descricao'),
-            genero: doc.get('genero'),
         );
       }).toList();
     });
   }
 
-  Stream<JogoModel> get getJogo{
-    return this._banco.jogoCollection.doc().snapshots().map((DocumentSnapshot documentSnapshot) {
+  */
+
+   /*Stream<JogoModel> getJogo(String jogoUID){
+    return this._banco.jogoCollection.doc(jogoUID).snapshots().map((DocumentSnapshot documentSnapshot) {
       return JogoModel(
         uid: documentSnapshot.id,
         nome: documentSnapshot.get('nome'),
         ano: documentSnapshot.get('ano'),
         descricao: documentSnapshot.get('descricao'),
-        genero: documentSnapshot.get('genero'),
       );
     });
-  }
+  }*/
 
-  Future atualizarDadosUsuario(String um, String dois, String tres, int quatro, String userUID) async{
+ /* Future atualizarDadosUsuario(String um, String dois, String tres, int quatro, String userUID) async{
 
     return await this._banco.algoCollection.doc(Banco.FIREBASE_AUTH.currentUser.uid).set({
       'userUID': userUID,
@@ -82,7 +95,6 @@ class JogoController{
   }
 
   Future<bool> excluirDadosUsuario(String usuarioUID) async{
-
       return await this._banco.algoCollection.doc(usuarioUID)
         .delete()
         .then((value) => true)
@@ -116,6 +128,6 @@ class JogoController{
       );
     });
   }
-
+*/
 
 }

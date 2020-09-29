@@ -1,9 +1,6 @@
 import 'package:artur_roberto_flutter/models/userModel.dart';
 import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
-import 'jogoController.dart';
 
 class UserController{
 
@@ -20,7 +17,8 @@ class UserController{
   }
   */
 
-  JogoController _jogoController = JogoController();
+  //JogoController _jogoController = JogoController();
+  Banco _banco = Banco();
 
   //criar objeto usuario com base no usuario enviado pela stream do firebase
   UserModel userFromFirebaseUser(User user){
@@ -33,16 +31,15 @@ class UserController{
   }
 
   //registrar com email e senha
-  Future registrarUsuario(UserModel usuario, GlobalKey<FormState> formkey) async{
-    if(!formkey.currentState.validate()){
-      return null;
-    }
-    formkey.currentState.save();
-
+  Future registrarUsuario(UserModel usuario) async{
     try{
       UserCredential authResult = await Banco.FIREBASE_AUTH.createUserWithEmailAndPassword(email: usuario.getEmail.trim(), password: usuario.getSenha.trim());
 
-      await _jogoController.atualizarDadosUsuario('usuario', '2', '3', 100, authResult.user.uid);
+      await _banco.usuarioCollection.doc(authResult.user.uid).collection('jogos').doc().set({
+        'nome': 'Jogo',
+        'descricao': 'Descrição',
+        'ano': 2000
+      });
 
       return this.userFromFirebaseUser(authResult.user);
     }catch(e){

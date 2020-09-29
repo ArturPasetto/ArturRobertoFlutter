@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Banco{
 
   static final FirebaseAuth FIREBASE_AUTH = FirebaseAuth.instance;
-  final CollectionReference algoCollection = FirebaseFirestore.instance.collection('algo');
-  final CollectionReference jogoCollection = FirebaseFirestore.instance.collection('jogo');
+  final CollectionReference usuarioCollection = FirebaseFirestore.instance.collection('usuario');
 
 }

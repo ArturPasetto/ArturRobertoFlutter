@@ -2,6 +2,8 @@ import 'package:artur_roberto_flutter/controllers/jogoController.dart';
 import 'package:artur_roberto_flutter/controllers/loginController.dart';
 import 'package:artur_roberto_flutter/models/algoUserModel.dart';
 import 'package:artur_roberto_flutter/models/jogoModel.dart';
+import 'package:artur_roberto_flutter/styles/theme.dart';
+import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:artur_roberto_flutter/views/autenticacao/loginView.dart';
 import 'package:artur_roberto_flutter/views/home/settingsFormView.dart';
 import 'package:artur_roberto_flutter/views/jogo/addJogoView.dart';
@@ -14,17 +16,44 @@ import 'jogoList.dart';
 class Home extends StatelessWidget{
 
   LoginController _loginController = Get.find<LoginController>();
+  JogoController _jogoController = JogoController();
+  var _isSearching = false.obs;
+
+
+  FloatingActionButton _fab =  FloatingActionButton(
+    onPressed: () =>  Get.to(AdicionarJogoView()),
+    backgroundColor: Color(0xFF434273),
+    shape: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.white),
+        borderRadius: BorderRadius.circular(50)
+    ),
+    child: Icon(Icons.add),
+  );
+
 
   @override
   Widget build(BuildContext context) {
 
     return StreamProvider<List<JogoModel>>.value(
-      value: JogoController().getListaJogos,
+      value: JogoController().getListaJogosUser,
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: ThemeColors.HOME_BACKGROUND,
         appBar: AppBar(
-          title: Text('Home', style: TextStyle(color: Colors.white),),
-          backgroundColor: Colors.black26,
+          leading: IconButton(
+              icon: Obx(() => _isSearching.value ? Icon(Icons.close) : Icon(Icons.search)),
+              onPressed: () => _isSearching.value = !_isSearching.value
+          ),
+          title: Obx(() => _isSearching.value ? TextField(
+              style: TextStyles.FORMFIELD,
+              decoration: TextStyles.FORMFIELD_DECORATION,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (pesquisa) async{
+                //print(pesquisa);
+                _isSearching.value = false;
+              },
+            ) : Text('Home', style: TextStyle(color: Colors.white),)
+          ),
+          backgroundColor: ThemeColors.APP_BAR_BACKGROUND,
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
@@ -35,21 +64,10 @@ class Home extends StatelessWidget{
                 Get.offAll(LoginView());
               },
             ),
-            /*FlatButton.icon(
-              icon: Icon(Icons.settings, color: Colors.white,),
-              label: Text("Configurações", style: TextStyle(color: Colors.white),),
-              onPressed: () => Get.to(SettingsFormView()),
-            )*/
           ],
         ),
         body: JogoList(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: (){
-            Get.to(AdicionarJogoView());
-          },
-          backgroundColor: Colors.pinkAccent,
-          child: Icon(Icons.add),
-        ),
+        floatingActionButton: _fab,
       ),
     );
   }

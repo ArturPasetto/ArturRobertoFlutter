@@ -5,8 +5,8 @@ class JogoModel {
   String nome;
   int ano;
   String descricao;
-  List<dynamic> genero;
+  String url_img;
 
-  JogoModel({this.uid, this.nome, this.ano, this.descricao, this.genero});
+  JogoModel({this.uid, this.nome, this.ano, this.descricao});
 
 }
