@@ -2,14 +2,15 @@
 class UserModel {
 
   final String uid;
-  String _email;
+  String email;
   String _senha;
+  String nome;
+  String telefone;
+  DateTime aniversario;
 
-  UserModel({this.uid});
+  get getSenha => this._senha;
+  set setSenha(value) => this._senha = value;
 
-  String get getEmail => this._email;
-  String get getSenha => this._senha;
-  set setEmail(String value) => this._email = value;
-  set setSenha(String value) => this._senha = value;
+  UserModel({this.uid, this.nome, this.email, this.telefone, this.aniversario});
 
 }

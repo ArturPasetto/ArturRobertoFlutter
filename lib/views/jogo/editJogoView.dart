@@ -1,8 +1,6 @@
 import 'package:artur_roberto_flutter/controllers/jogoController.dart';
-import 'package:artur_roberto_flutter/models/algoUserModel.dart';
 import 'package:artur_roberto_flutter/models/jogoModel.dart';
 import 'package:artur_roberto_flutter/styles/theme.dart';
-import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -14,7 +12,7 @@ class EditarJogoView extends GetView<JogoController>{
 
 
   final List<int> _listaAno = List<int>();
-  final _editFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
   final JogoModel jogo;
 
   EditarJogoView({this.jogo});
@@ -39,20 +37,20 @@ class EditarJogoView extends GetView<JogoController>{
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: ThemeColors.APP_BAR_BACKGROUND,
+        backgroundColor: ThemeColors.SECUNDARY_COLOR,
         elevation: 0.0,
         centerTitle: true,
         title:Text("Atualizar Jogo"),
       ),
       body: Container(
-          color: ThemeColors.ADD_JOGO_BACKGROUND,
+          color: ThemeColors.PRIMARY_COLOR,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Form(
                 key:_editFormKey,
                 child:Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height:20),
                     TextFormField(
@@ -76,7 +74,7 @@ class EditarJogoView extends GetView<JogoController>{
                     DropdownButtonFormField<int>(
                       style: TextStyles.FORMFIELD,
                       decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Ano'),
-                      dropdownColor: ThemeColors.ADD_JOGO_FORMFIELD_BACKGROUND,
+                      dropdownColor: ThemeColors.SECUNDARY_COLOR,
                       value: _listaAno.elementAt(_listaAno.indexOf(jogo.ano)),
                       items:  _listaAno.map((valor) {
                         return DropdownMenuItem<int>(
@@ -89,9 +87,7 @@ class EditarJogoView extends GetView<JogoController>{
                     SizedBox(height:20),
                     FlatButton(
                       color: Color(0xFF434273),
-                      shape: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)
-                      ),
+                      shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                       textColor: Colors.black ,
                       child: Text('Atualizar jogo', style: TextStyle(color: Colors.white)),
                       onPressed: () async{

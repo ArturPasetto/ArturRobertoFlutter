@@ -1,8 +1,6 @@
 import 'package:artur_roberto_flutter/controllers/jogoController.dart';
-import 'package:artur_roberto_flutter/models/algoUserModel.dart';
 import 'package:artur_roberto_flutter/models/jogoModel.dart';
 import 'package:artur_roberto_flutter/styles/theme.dart';
-import 'package:artur_roberto_flutter/utils/banco.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -14,8 +12,8 @@ class AdicionarJogoView extends GetView<JogoController>{
 
   JogoModel _jogo = JogoModel();
   final List<int> _listaAno = List<int>();
-  final _addJogoFormKey = GlobalKey<FormState>();
-
+  GlobalKey<FormState> _addJogoFormKey = GlobalKey<FormState>();
+  
   void criarListas(){
     _listaAno.removeRange(0, _listaAno.length);
     int i=0;
@@ -34,6 +32,7 @@ class AdicionarJogoView extends GetView<JogoController>{
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor:Colors.blue,
         elevation: 0.0,
@@ -41,13 +40,13 @@ class AdicionarJogoView extends GetView<JogoController>{
         title:Text("Adicionar Jogo"),
       ),
       body: Container(
-        color: ThemeColors.ADD_JOGO_BACKGROUND,
+        color: ThemeColors.PRIMARY_COLOR,
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Form(
                 key:_addJogoFormKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormField(
                         style: TextStyles.FORMFIELD ,
@@ -68,7 +67,7 @@ class AdicionarJogoView extends GetView<JogoController>{
                     DropdownButtonFormField<int>(
                       style: TextStyles.FORMFIELD,
                       decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Ano'),
-                      dropdownColor: ThemeColors.ADD_JOGO_FORMFIELD_BACKGROUND,
+                      dropdownColor: ThemeColors.SECUNDARY_COLOR,
                       value: _listaAno.elementAt(0),
                       items: _listaAno.map((valor) {
                         return DropdownMenuItem<int>(
@@ -81,9 +80,7 @@ class AdicionarJogoView extends GetView<JogoController>{
                     SizedBox(height: 20,),
                     FlatButton(
                       color: Color(0xFF434273),
-                      shape: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)
-                      ),
+                      shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                       textColor: Colors.black ,
                       child: Text('Cadastrar Jogo', style: TextStyle(color: Colors.white)),
                       onPressed: () async{

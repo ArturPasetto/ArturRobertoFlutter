@@ -10,19 +10,21 @@ import 'package:get/get.dart';
 
 class LoginView extends StatelessWidget{
 
-  final _loginFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final LoginController _loginController = Get.put(LoginController());
   var _dialogError = ''.obs;
   var _ocultarSenha = true.obs;
 
   UserModel _user = UserModel();
 
+
   @override
   Widget build(BuildContext context) {
    return Scaffold(
-     backgroundColor: Colors.grey[100],
+     resizeToAvoidBottomInset: false,
+     backgroundColor: ThemeColors.PRIMARY_COLOR,
      appBar:AppBar(
-       backgroundColor: ThemeColors.APP_BAR_BACKGROUND,
+       backgroundColor: ThemeColors.SECUNDARY_COLOR,
        elevation: 0.0,
        title:Text("Login"),
        actions: <Widget>[
@@ -34,7 +36,6 @@ class LoginView extends StatelessWidget{
        ],
      ),
      body: Container(
-         color: ThemeColors.HOME_BACKGROUND,
          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal:25.0),
          child:Form(
            key: this._loginFormKey,
@@ -48,7 +49,7 @@ class LoginView extends StatelessWidget{
                          labelText: 'Email',
                          icon: Icon(Icons.email, color: Colors.white)
                      ),
-                     onSaved: (value) => _user.setEmail = value,
+                     onSaved: (value) => _user.email = value,
                      validator: (value) => value.isEmpty ? 'Email não pode ser vazio' : null
                  ),
                  SizedBox(height:20),
@@ -58,13 +59,9 @@ class LoginView extends StatelessWidget{
                      decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
                          labelText: 'Senha',
                          suffixIcon: IconButton(
-                           icon: Icon(
-                               _ocultarSenha.value ? Icons.visibility : Icons.visibility_off
-                           ),
+                           icon: Icon(_ocultarSenha.value ? Icons.visibility : Icons.visibility_off),
                            color: Colors.white,
-                           onPressed: () {
-                             _ocultarSenha.value = !_ocultarSenha.value;
-                           },
+                           onPressed: () =>  _ocultarSenha.value = !_ocultarSenha.value,
                          ),
                          icon: Icon(Icons.lock, color: Colors.white)
                      ),
