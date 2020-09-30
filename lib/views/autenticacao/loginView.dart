@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 
-class LoginView extends StatelessWidget{
+bool isLarge = false;
+
+
+class LoginViewScreen extends StatelessWidget {
 
   GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final LoginController _loginController = Get.put(LoginController());
@@ -17,85 +20,106 @@ class LoginView extends StatelessWidget{
 
   UserModel _user = UserModel();
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: ThemeColors.PRIMARY_COLOR,
+        appBar:AppBar(
+          backgroundColor: ThemeColors.SECUNDARY_COLOR,
+          elevation: 0.0,
+          title:Text("Login"),
+          actions: <Widget>[
+            FlatButton.icon(
+              icon:Icon(Icons.person_add, color: Colors.white),
+              label: Text('Registrar-se', style: TextStyle(color:Colors.white)),
+              onPressed:() => Get.to(RegistrarView()),
+            )
+          ],
+        ),
+      body: SizedBox.expand(
+        child: FractionallySizedBox(
+          widthFactor: isLarge ? 0.25 : 1.0,
+          alignment: FractionalOffset.center,
+          child:Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal:25.0),
+              child: Form(
+                key: this._loginFormKey,
+                child:Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:<Widget>[
+                      SizedBox(height:20),
+                      TextFormField(
+                        style: TextStyles.FORMFIELD,
+                        decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
+                            labelText: 'Email',
+                            icon: Icon(Icons.email, color: Colors.white)
+                        ),
+                        onSaved: (value) => _user.email = value,
+                        validator: (value) => value.isEmpty ? 'Email não pode ser vazio' : null,
+                      ),
+                      SizedBox(height:20),
+                      Obx(() => TextFormField(
+                          obscureText: _ocultarSenha.value,
+                          style: TextStyles.FORMFIELD,
+                          decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
+                              labelText: 'Senha',
+                              suffixIcon: IconButton(
+                                icon: Icon(_ocultarSenha.value ? Icons.visibility : Icons.visibility_off),
+                                color: Colors.white,
+                                onPressed: () =>  _ocultarSenha.value = !_ocultarSenha.value,
+                              ),
+                              icon: Icon(Icons.lock, color: Colors.white)
+                          ),
+                          onSaved: (value) => _user.setSenha = value,
+                          validator: (value) => value.isEmpty ? 'Senha não pode ser vazia' : null,
+                      )),
+                      SizedBox(height:20),
+                      FlatButton(
+                        color: Color(0xFF434273),
+                        shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        child: Text('Logar', style: TextStyle(color: Colors.white)),
+                        onPressed:() async {
+
+                          if(!_loginFormKey.currentState.validate()){
+                            return null;
+                          }
+                          else {
+                            _loginFormKey.currentState.save();
+                            dynamic result = await _loginController.logar(_user);
+
+                            if(result == null) _dialogError.value = 'Não foi possível logar com essas credenciais';
+                            else  Get.to(Home());
+                          }
+
+                          //else print(result);
+                        },
+                      ),
+                      SizedBox(height: 12),
+                      Obx(() => Text(_dialogError.value, style: TextStyle(color:Colors.red, fontSize:12))),
+                    ]
+                ),
+              )
+          ),
+        )
+      ),
+    );
+  }
+
+}
+
+
+class LoginView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-     resizeToAvoidBottomInset: false,
-     backgroundColor: ThemeColors.PRIMARY_COLOR,
-     appBar:AppBar(
-       backgroundColor: ThemeColors.SECUNDARY_COLOR,
-       elevation: 0.0,
-       title:Text("Login"),
-       actions: <Widget>[
-         FlatButton.icon(
-           icon:Icon(Icons.person_add, color: Colors.white),
-           label: Text('Registrar-se', style: TextStyle(color:Colors.white)),
-           onPressed:() => Get.to(RegistrarView()),
-         )
-       ],
-     ),
-     body: Container(
-         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal:25.0),
-         child:Form(
-           key: this._loginFormKey,
-           child:Column(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children:<Widget>[
-                 SizedBox(height:20),
-                 TextFormField(
-                     style: TextStyles.FORMFIELD,
-                     decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
-                         labelText: 'Email',
-                         icon: Icon(Icons.email, color: Colors.white)
-                     ),
-                     onSaved: (value) => _user.email = value,
-                     validator: (value) => value.isEmpty ? 'Email não pode ser vazio' : null
-                 ),
-                 SizedBox(height:20),
-                 Obx(() => TextFormField(
-                     obscureText: _ocultarSenha.value,
-                     style: TextStyles.FORMFIELD,
-                     decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
-                         labelText: 'Senha',
-                         suffixIcon: IconButton(
-                           icon: Icon(_ocultarSenha.value ? Icons.visibility : Icons.visibility_off),
-                           color: Colors.white,
-                           onPressed: () =>  _ocultarSenha.value = !_ocultarSenha.value,
-                         ),
-                         icon: Icon(Icons.lock, color: Colors.white)
-                     ),
-                     onSaved: (value) => _user.setSenha = value,
-                     validator: (value) => value.isEmpty ? 'Senha não pode ser vazia' : null
-                 )),
-                 SizedBox(height:20),
-                 FlatButton(
-                   color: Color(0xFF434273),
-                   shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                   child: Text('Logar', style: TextStyle(color: Colors.white)),
-                   onPressed:() async {
-
-                     if(!_loginFormKey.currentState.validate()){
-                       return null;
-                     }
-                     else {
-                       _loginFormKey.currentState.save();
-                       dynamic result = await _loginController.logar(_user);
-
-                       if(result == null) _dialogError.value = 'Não foi possível logar com essas credenciais';
-                       else  Get.to(Home());
-                     }
-
-                     //else print(result);
-                   },
-                 ),
-                 SizedBox(height: 12),
-                 Obx(() => Text(_dialogError.value, style: TextStyle(color:Colors.red, fontSize:12))),
-               ]
-           ),
-         )
-     )
-    );
+    return LayoutBuilder(
+       builder: (context, constraints){
+         constraints.maxWidth < 600 ? isLarge = false : isLarge = true;
+         return LoginViewScreen();
+       }
+   );
   }
 
 

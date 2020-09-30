@@ -14,14 +14,16 @@ import 'package:provider/provider.dart';
 
 import 'jogoList.dart';
 
-class Home extends StatelessWidget{
+bool isLarge = false;
+
+
+class HomeViewScreen extends StatelessWidget{
 
   LoginController _loginController = Get.find<LoginController>();
   UserController _userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
-
     return StreamProvider<List<JogoModel>>.value(
       value: JogoController().getListaJogosUser,
       child: Scaffold(
@@ -40,66 +42,86 @@ class Home extends StatelessWidget{
           ],
         ),
         drawer: Drawer(
-          child: Container(
-            color: ThemeColors.PRIMARY_COLOR,
-            child: ListView(
-                children:[
-                  Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage('assets/img4.jpg')
-                        )
-                    ),
-                    child: Center(
-                      child: ClipRect(
-                          child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                              child: Container(
-                                  color: Colors.black.withOpacity(0.0),
-                                  child: DrawerHeader(
-                                      child: ListTile(
-                                        title: Text(Banco.FIREBASE_AUTH.currentUser.displayName, style: TextStyles.DRAWER_TITULO,),
-                                        subtitle: Text(Banco.FIREBASE_AUTH.currentUser.email, style: TextStyles.DRAWER_SUBTITULO),
-                                      )
-                                  )
-                              )
-                          )
-                      )
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Adicionar Jogo', style: TextStyles.CARD_JOGO_TITULO),
-                    leading: Icon(Icons.add, color: Colors.white,),
-                    onTap: () {
-                      Get.back();
-                      Get.to(AdicionarJogoView());
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Configurações', style: TextStyles.CARD_JOGO_TITULO),
-                    leading: Icon(Icons.settings, color: Colors.white,),
-                    onTap: () async {
-                      Get.back();
-                      await Get.to(EditarUsuarioView(usuario: await _userController.getDadosUsuario()));
-                    },
-                  ),
-                  Divider(color: ThemeColors.TERCIARY_COLOR,),
-                  ListTile(
-                    title: Text('Deslogar', style: TextStyles.CARD_JOGO_TITULO),
-                    leading: Icon(Icons.logout, color: Colors.white,),
-                    onTap: () async {
-                      await _loginController.deslogar();
-                      Get.offAll(LoginView());
-                    }
-                  ),
-                ]
+            child: Container(
+                color: ThemeColors.PRIMARY_COLOR,
+                child: ListView(
+                    children:[
+                      Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: AssetImage('assets/img4.jpg')
+                            )
+                        ),
+                        child: Center(
+                            child: ClipRect(
+                                child: BackdropFilter(
+                                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                                    child: Container(
+                                        color: Colors.black.withOpacity(0.0),
+                                        child: DrawerHeader(
+                                            child: ListTile(
+                                              title: Text(Banco.FIREBASE_AUTH.currentUser.displayName, style: TextStyles.DRAWER_TITULO,),
+                                              subtitle: Text(Banco.FIREBASE_AUTH.currentUser.email, style: TextStyles.DRAWER_SUBTITULO),
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Adicionar Jogo', style: TextStyles.CARD_JOGO_TITULO),
+                        leading: Icon(Icons.add, color: Colors.white,),
+                        onTap: () {
+                          Get.back();
+                          Get.to(AdicionarJogoView());
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Configurações', style: TextStyles.CARD_JOGO_TITULO),
+                        leading: Icon(Icons.settings, color: Colors.white,),
+                        onTap: () async {
+                          Get.back();
+                          await Get.to(EditarUsuarioView(usuario: await _userController.getDadosUsuario()));
+                        },
+                      ),
+                      Divider(color: ThemeColors.TERCIARY_COLOR,),
+                      ListTile(
+                          title: Text('Deslogar', style: TextStyles.CARD_JOGO_TITULO),
+                          leading: Icon(Icons.logout, color: Colors.white,),
+                          onTap: () async {
+                            await _loginController.deslogar();
+                            Get.offAll(LoginView());
+                          }
+                      ),
+                    ]
+                )
             )
+        ),
+        body: SizedBox.expand(
+          child: FractionallySizedBox(
+            widthFactor: isLarge ? 0.25 : 1.0,
+            alignment: FractionalOffset.center,
+            child: JogoList(),
           )
         ),
-        body: JogoList(),
         //floatingActionButton: _fab,
       ),
+    );
+  }
+
+}
+
+class Home extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+        builder: (context, constraints){
+          constraints.maxWidth < 600 ? isLarge = false : isLarge = true;
+          return HomeViewScreen();
+        }
     );
   }
 

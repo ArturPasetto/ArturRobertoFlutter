@@ -6,7 +6,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:get/get.dart';
 
-class EditarUsuarioView extends GetView<UserController>{
+
+bool isLarge = false;
+
+class EditarUsuarioViewScren extends GetView<UserController>{
 
 
   MaskedTextController _maskController = MaskedTextController(mask: '(00) 00000-0000');
@@ -15,7 +18,7 @@ class EditarUsuarioView extends GetView<UserController>{
   var _dialogError = ''.obs;
   final UserModel usuario;
 
-  EditarUsuarioView({this.usuario});
+  EditarUsuarioViewScren({this.usuario});
 
 
   @override
@@ -27,112 +30,142 @@ class EditarUsuarioView extends GetView<UserController>{
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
+      backgroundColor: ThemeColors.PRIMARY_COLOR,
       appBar: AppBar(
         backgroundColor: ThemeColors.SECUNDARY_COLOR,
         elevation: 0.0,
         centerTitle: true,
         title:Text("Atualizar Dados"),
       ),
-      body: Container(
-        color: ThemeColors.PRIMARY_COLOR,
-        child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: Form(
-              key:_editFormKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                      controller: _maskController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyles.FORMFIELD,
-                      decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
-                          labelText: 'Telefone',
-                          icon: Icon(Icons.phone, color: Colors.white)
-                      ),
-                      onSaved: (value) => usuario.telefone = value,
-                      validator: (value) => value.numericOnly().length<11 ? 'O número de telefone não é valido' : null
-                  ),
-                  SizedBox(height:20),
-                  Row(
+      body: SizedBox.expand(
+        child: FractionallySizedBox(
+          widthFactor: isLarge ? 0.25 : 1.0,
+            alignment: FractionalOffset.center,
+          child:  Container(
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Form(
+                  key:_editFormKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(Icons.calendar_today, color: Colors.white),
-                      SizedBox(width: 12.5),
-                      Expanded(
-                        child:  FlatButton(
-                          child: Text('Selecione sua Data de Nascimento', style: TextStyles.FORMFIELD),
-                          color: ThemeColors.TERCIARY_COLOR,
-                          onPressed: () async {
-                            _datanascimento.value = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime(1950),
-                                initialDate: _datanascimento.value ?? usuario.aniversario,
-                                lastDate: DateTime.now(),
-                                builder: (BuildContext context, Widget child){
-                                  return Theme(
-                                      data: ThemeData.dark(),
-                                      child: child
-                                  );
-                                }
-                            );
-                            if(_datanascimento.value.isNull) _dialogError.value = 'Selecione uma data';
-                          },
-                        ),
+                      TextFormField(
+                          controller: _maskController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyles.FORMFIELD,
+                          decoration: TextStyles.FORMFIELD_DECORATION.copyWith(
+                              labelText: 'Telefone',
+                              icon: Icon(Icons.phone, color: Colors.white)
+                          ),
+                          onSaved: (value) => usuario.telefone = value,
+                          validator: (value) => value.numericOnly().length<11 ? 'O número de telefone não é valido' : null
                       ),
-                      Obx(() => Text(_dialogError.value, style: TextStyle(color: Colors.white)))
+                      SizedBox(height:20),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today, color: Colors.white),
+                          SizedBox(width: 12.5),
+                          Expanded(
+                            child:  FlatButton(
+                              child: Text('Selecione sua Data de Nascimento', style: TextStyles.FORMFIELD),
+                              color: ThemeColors.TERCIARY_COLOR,
+                              onPressed: () async {
+                                _datanascimento.value = await showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime(1950),
+                                    initialDate: _datanascimento.value ?? usuario.aniversario,
+                                    lastDate: DateTime.now(),
+                                    builder: (BuildContext context, Widget child){
+                                      return Theme(
+                                          data: ThemeData.dark(),
+                                          child: child
+                                      );
+                                    }
+                                );
+                                if(_datanascimento.value.isNull) {
+                                  _dialogError.value = 'Selecione uma data';
+                                  _datanascimento.value = DateTime.now();
+                                }
+                                else _dialogError.value = '';
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Obx(() => Text(_dialogError.value, style: TextStyle(color: Colors.red))),
+                      FlatButton(
+                        color: Color(0xFF434273),
+                        shape: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white)
+                        ),
+                        textColor: Colors.black ,
+                        child: Text('Atualizar dados', style: TextStyle(color: Colors.white)),
+                        onPressed: () async{
+                          if(!_editFormKey.currentState.validate()){
+                            return null;
+                          }
+                          else {
+                            _editFormKey.currentState.save();
+
+                            usuario.aniversario = _datanascimento.value;
+
+                            bool result = await controller.atualizarUsuario(this.usuario);
+                            Get.back();
+                            if(result){
+                              GetBar(
+                                messageText: Center(
+                                    child:Text(
+                                        'Atualizado com sucesso',
+                                        style: TextStyle(color: Colors.white)
+                                    )
+                                ),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 4),
+                              ).show();
+                            }
+                            else {
+                              GetBar(
+                                messageText: Center(
+                                    child:Text(
+                                        'Aconteceu algo inesperado',
+                                        style: TextStyle(color: Colors.white)
+                                    )
+                                ),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 4),
+                              ).show();
+                            }
+                          }
+                        },
+                      )
                     ],
                   ),
-                  FlatButton(
-                    color: Color(0xFF434273),
-                    shape: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white)
-                    ),
-                    textColor: Colors.black ,
-                    child: Text('Atualizar dados', style: TextStyle(color: Colors.white)),
-                    onPressed: () async{
-                      if(!_editFormKey.currentState.validate()){
-                        return null;
-                      }
-                      else {
-                        _editFormKey.currentState.save();
-
-                        usuario.aniversario = _datanascimento.value;
-
-                        bool result = await controller.atualizarUsuario(this.usuario);
-                        Get.back();
-                        if(result){
-                          GetBar(
-                            messageText: Center(
-                                child:Text(
-                                    'Atualizado com sucesso',
-                                    style: TextStyle(color: Colors.white)
-                                )
-                            ),
-                            backgroundColor: Colors.green,
-                            duration: Duration(seconds: 4),
-                          ).show();
-                        }
-                        else {
-                          GetBar(
-                            messageText: Center(
-                                child:Text(
-                                    'Aconteceu algo inesperado',
-                                    style: TextStyle(color: Colors.white)
-                                )
-                            ),
-                            backgroundColor: Colors.red,
-                            duration: Duration(seconds: 4),
-                          ).show();
-                        }
-                      }
-                    },
-                  )
-                ],
-              ),
+                )
             )
+            ,
+          )
         )
-        ,
       ),
     );
+  }
+
+}
+
+
+class EditarUsuarioView extends GetView<UserController>{
+
+  final UserModel usuario;
+  EditarUsuarioView({this.usuario});
+
+  @override
+  Widget build(BuildContext context) {
+    return  LayoutBuilder(
+        builder: (context, constraints){
+          constraints.maxWidth < 600 ? isLarge = false : isLarge = true;
+          return EditarUsuarioViewScren(usuario: this.usuario);
+        }
+    );;
   }
 
 }

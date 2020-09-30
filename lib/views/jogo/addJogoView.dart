@@ -6,14 +6,15 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
 
+bool isLarge = false;
 
-class AdicionarJogoView extends GetView<JogoController>{
 
+class AdicionarJogoViewScreen extends GetView<JogoController>{
 
   JogoModel _jogo = JogoModel();
   final List<int> _listaAno = List<int>();
   GlobalKey<FormState> _addJogoFormKey = GlobalKey<FormState>();
-  
+
   void criarListas(){
     _listaAno.removeRange(0, _listaAno.length);
     int i=0;
@@ -24,7 +25,6 @@ class AdicionarJogoView extends GetView<JogoController>{
     _jogo.ano = _listaAno.elementAt(0);
   }
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -33,97 +33,123 @@ class AdicionarJogoView extends GetView<JogoController>{
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
+      backgroundColor: ThemeColors.PRIMARY_COLOR,
       appBar: AppBar(
-        backgroundColor:Colors.blue,
+        backgroundColor: ThemeColors.SECUNDARY_COLOR,
         elevation: 0.0,
         centerTitle: true,
         title:Text("Adicionar Jogo"),
       ),
-      body: Container(
-        color: ThemeColors.PRIMARY_COLOR,
-        child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: Form(
-                key:_addJogoFormKey,
-                child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                        style: TextStyles.FORMFIELD ,
-                        decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Nome'),
-                        onSaved: (value) => _jogo.nome = value,
-                        onChanged: (value) => _jogo.nome = value,
-                        validator: (value) => value.isEmpty ? 'Nome não pode ser vazio' : null
-                    ),
-                    SizedBox(height: 20,),
-                    TextFormField(
-                        style: TextStyles.FORMFIELD ,
-                        decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Descrição'),
-                        onSaved: (value) => _jogo.descricao = value,
-                        onChanged: (value) => _jogo.descricao = value,
-                        validator: (value) => value.isEmpty || value.isNullOrBlank ? 'Descrição não pode ser vazio' : null
-                    ),
-                    SizedBox(height: 20,),
-                    DropdownButtonFormField<int>(
-                      style: TextStyles.FORMFIELD,
-                      decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Ano'),
-                      dropdownColor: ThemeColors.SECUNDARY_COLOR,
-                      value: _listaAno.elementAt(0),
-                      items: _listaAno.map((valor) {
-                        return DropdownMenuItem<int>(
-                            value: valor,
-                            child:Text(valor.toString())
-                        );
-                      }).toList(),
-                      onChanged: (valor) => _jogo.ano = _listaAno.elementAt(_listaAno.indexOf(valor)),
-                    ),
-                    SizedBox(height: 20,),
-                    FlatButton(
-                      color: Color(0xFF434273),
-                      shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                      textColor: Colors.black ,
-                      child: Text('Cadastrar Jogo', style: TextStyle(color: Colors.white)),
-                      onPressed: () async{
+      body: SizedBox.expand(
+        child: FractionallySizedBox(
+          widthFactor: isLarge ? 0.25 : 1.0,
+          alignment: FractionalOffset.center,
+          child: Container(
+              child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  child: Form(
+                      key:_addJogoFormKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                              style: TextStyles.FORMFIELD ,
+                              decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Nome'),
+                              onSaved: (value) => _jogo.nome = value,
+                              onChanged: (value) => _jogo.nome = value,
+                              validator: (value) => value.isEmpty ? 'Nome não pode ser vazio' : null
+                          ),
+                          SizedBox(height: 20,),
+                          TextFormField(
+                              style: TextStyles.FORMFIELD ,
+                              decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Descrição'),
+                              maxLines: 10,
+                              onSaved: (value) => _jogo.descricao = value,
+                              onChanged: (value) => _jogo.descricao = value,
+                              validator: (value) => value.isEmpty || value.isNullOrBlank ? 'Descrição não pode ser vazio' : null
+                          ),
+                          SizedBox(height: 20,),
+                          DropdownButtonFormField<int>(
+                            style: TextStyles.FORMFIELD,
+                            decoration: TextStyles.FORMFIELD_DECORATION.copyWith(labelText: 'Ano'),
+                            dropdownColor: ThemeColors.SECUNDARY_COLOR,
+                            value: _listaAno.elementAt(0),
+                            items: _listaAno.map((valor) {
+                              return DropdownMenuItem<int>(
+                                  value: valor,
+                                  child:Text(valor.toString())
+                              );
+                            }).toList(),
+                            onChanged: (valor) => _jogo.ano = _listaAno.elementAt(_listaAno.indexOf(valor)),
+                          ),
+                          SizedBox(height: 20,),
+                          FlatButton(
+                            color: Color(0xFF434273),
+                            shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                            textColor: Colors.black ,
+                            child: Text('Cadastrar Jogo', style: TextStyle(color: Colors.white)),
+                            onPressed: () async{
 
-                        if(!_addJogoFormKey.currentState.validate()){
-                          return null;
-                        }
-                        else {
-                          _addJogoFormKey.currentState.save();
-                          bool result =  await controller.adicionarJogo(_jogo, _addJogoFormKey);
-                          Get.back();
-                          if(result){
-                            GetBar(
-                              messageText: Center(
-                                  child:Text(
-                                      'Adicionado com sucesso',
-                                      style: TextStyle(color: Colors.white)
-                                  )
-                              ),
-                              backgroundColor: Colors.green,
-                              duration: Duration(seconds: 4),
-                            ).show();
-                          }
-                          else {
-                            GetBar(
-                              messageText: Center(
-                                  child:Text(
-                                      'Aconteceu algo inesperado',
-                                      style: TextStyle(color: Colors.white)
-                                  )
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 4),
-                            ).show();
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                )
-            )
+                              if(!_addJogoFormKey.currentState.validate()){
+                                return null;
+                              }
+                              else {
+                                _addJogoFormKey.currentState.save();
+                                bool result =  await controller.adicionarJogo(_jogo, _addJogoFormKey);
+                                Get.back();
+                                if(result){
+                                  GetBar(
+                                    messageText: Center(
+                                        child:Text(
+                                            'Adicionado com sucesso',
+                                            style: TextStyle(color: Colors.white)
+                                        )
+                                    ),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 4),
+                                  ).show();
+                                }
+                                else {
+                                  GetBar(
+                                    messageText: Center(
+                                        child:Text(
+                                            'Aconteceu algo inesperado',
+                                            style: TextStyle(color: Colors.white)
+                                        )
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 4),
+                                  ).show();
+                                }
+                              }
+                            },
+                          ),
+                        ],
+                      )
+                  )
+              )
+          )
         )
       ),
+    );
+
+  }
+
+}
+
+
+class AdicionarJogoView extends GetView<JogoController>{
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    return LayoutBuilder(
+        builder: (context, constraints){
+          constraints.maxWidth < 600 ? isLarge = false : isLarge = true;
+          return AdicionarJogoViewScreen();
+        }
     );
   }
 
